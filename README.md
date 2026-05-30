@@ -24,5 +24,5 @@ cmake --build build
 
 ##项目概述
 
-![1]((https://github.com/xpy618/SDLshooter/blob/master/SDLShooter.png))
+![1](https://github.com/xpy618/SDLshooter/blob/master/SDLShooter.png)
 
