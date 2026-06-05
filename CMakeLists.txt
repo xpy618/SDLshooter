@@ -26,14 +26,23 @@ find_package(SDL2_image REQUIRED)
 find_package(SDL2_mixer REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
-#添加可执行文件
-add_executable(${TARGET} 
-                "src/main.cpp"
-                "src/Game.cpp"
-                "src/Scene.cpp"
-                "src/SceneMain.cpp"
-                "src/SceneTitle.cpp"
-                "src/SceneEnd.cpp")
+#设置通用源文件
+set(SOURCES
+    "src/main.cpp"
+    "src/Game.cpp"
+    "src/Scene.cpp"
+    "src/SceneMain.cpp"
+    "src/SceneTitle.cpp"
+    "src/SceneEnd.cpp"
+)
+
+#根据平台追加
+if(WIN32)
+    list(APPEND SOURCES "resources.rc")
+endif()
+    # to do...
+
+add_executable(${TARGET} ${SOURCES})
 
 #链接库
 target_link_libraries(${TARGET} 
