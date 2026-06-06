@@ -21,3 +21,8 @@ cmake --build build
 ```
 
 构建产物输出到项目根目录。
+
+##项目概述
+
+![1](https://github.com/xpy618/SDLshooter/blob/master/SDLShooter.png)
+
