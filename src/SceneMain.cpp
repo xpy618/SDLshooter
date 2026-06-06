@@ -134,7 +134,8 @@ void SceneMain::init()
     playerShieldHeight /= 4;
 
     //初始化内存池
-    playerProjPool = new PlayerProjPool(ProjectilePlayerPrototype);
+    playerProjPool = new ObjectPool<ProjectilePlayer>(ProjectilePlayerPrototype);
+    enemyProjPool = new ObjectPool<ProjectileEnemy>(ProjectileEnemyPrototype);
 }
 
 void SceneMain::clean()
@@ -148,12 +149,12 @@ void SceneMain::clean()
     }
     sounds.clear();
     
-    for (auto projectile : projectilesPlayer){
-        if (projectile != nullptr)
-        {
-            delete projectile;
-        }
-    }
+    // for (auto projectile : projectilesPlayer){
+    //     if (projectile != nullptr)
+    //     {
+    //         delete projectile;
+    //     }
+    // }
     projectilesPlayer.clear();
 
     for (auto enemy : enemies){
@@ -162,13 +163,15 @@ void SceneMain::clean()
             delete enemy;
         }
     }
+    enemies.clear();
 
-    for (auto projectile : projectilesEnemy){
-        if (projectile != nullptr)
-        {
-            delete projectile;
-        }
-    }
+    // for (auto projectile : projectilesEnemy){
+    //     if (projectile != nullptr)
+    //     {
+    //         delete projectile;
+    //     }
+    // }
+    projectilesEnemy.clear();
 
     for (auto explosion : explosions){
         if (explosion != nullptr)
@@ -185,6 +188,16 @@ void SceneMain::clean()
         }
     }
     items.clear();
+
+    //清理内存池
+    if (playerProjPool != nullptr)
+    {
+        delete playerProjPool;
+    }
+    if (enemyProjPool != nullptr)
+    {
+        delete enemyProjPool;
+    }
 
     //清理UI
     if (uiHealth != nullptr)
@@ -294,7 +307,8 @@ void SceneMain::shootPlayer()
 
 void SceneMain::shootEnemy(Enemy* enemy)
 {
-    auto projectile = new ProjectileEnemy(ProjectileEnemyPrototype);
+    // auto projectile = new ProjectileEnemy(ProjectileEnemyPrototype);
+    auto projectile = enemyProjPool->create();
     projectile->position.x = enemy->position.x + enemy->width / 2 - projectile->width / 2;
     projectile->position.y = enemy->position.y + enemy->height / 2 - projectile->height / 2;
     projectile->direction = getDirection(enemy);
@@ -358,7 +372,8 @@ void SceneMain::updateEnemyProjectiles(float deltaTime)
             projectile->position.y < -margin ||
             projectile->position.x < -margin ||
             projectile->position.x > game.getWindowWidth() + margin){
-            delete projectile;
+            // delete projectile;
+            enemyProjPool->release(projectile);
             it = projectilesEnemy.erase(it);}
         else{
             SDL_Rect playerRect = {
@@ -379,7 +394,8 @@ void SceneMain::updateEnemyProjectiles(float deltaTime)
                 } else {
                     player.currentHealth -= projectile->damage;
                 }
-                delete projectile;
+                // delete projectile;
+                enemyProjPool->release(projectile);
                 it = projectilesEnemy.erase(it);
                 Mix_PlayChannel(-1, sounds["hit"], 0);
             }else{

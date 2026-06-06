@@ -33,8 +33,10 @@ struct Enemy{
 
 struct ProjectilePlayer{
     SDL_Texture *texture =nullptr;
-    ProjectilePlayer* next = nullptr;
-    SDL_FPoint position = {0,0};
+    union{                                  //共用一块内存空间，并且只能有一个赋值
+        ProjectilePlayer* next = nullptr;   //只有在内存池中有意义，拿出来就没用
+        SDL_FPoint position;                //内存池中无意义，拿出来才有用
+    };
     int width = 0;
     int height = 0;
     int speed = 800;
@@ -43,7 +45,10 @@ struct ProjectilePlayer{
 
 struct ProjectileEnemy{
     SDL_Texture *texture =nullptr;
-    SDL_FPoint position = {0,0};
+    union{
+        ProjectileEnemy* next = nullptr;
+        SDL_FPoint position;
+    };
     SDL_FPoint direction = {0,0};
     int width = 0;
     int height = 0;
