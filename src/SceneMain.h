@@ -50,6 +50,7 @@ private:
     //创建对象池
     ObjectPool<ProjectilePlayer>* playerProjPool = nullptr;
     ObjectPool<ProjectileEnemy>* enemyProjPool = nullptr;
+    ObjectPool<Enemy>* enemyPool = nullptr;
 
     //创建容器
     std::list<Enemy*> enemies;

@@ -136,6 +136,7 @@ void SceneMain::init()
     //初始化内存池
     playerProjPool = new ObjectPool<ProjectilePlayer>(ProjectilePlayerPrototype);
     enemyProjPool = new ObjectPool<ProjectileEnemy>(ProjectileEnemyPrototype);
+    enemyPool = new ObjectPool<Enemy>(EnemyPrototype);
 }
 
 void SceneMain::clean()
@@ -157,12 +158,12 @@ void SceneMain::clean()
     // }
     projectilesPlayer.clear();
 
-    for (auto enemy : enemies){
-        if (enemy != nullptr)
-        {
-            delete enemy;
-        }
-    }
+    // for (auto enemy : enemies){
+    //     if (enemy != nullptr)
+    //     {
+    //         delete enemy;
+    //     }
+    // }
     enemies.clear();
 
     // for (auto projectile : projectilesEnemy){
@@ -197,6 +198,10 @@ void SceneMain::clean()
     if (enemyProjPool != nullptr)
     {
         delete enemyProjPool;
+    }
+    if (enemyPool != nullptr)
+    {
+        delete enemyPool;
     }
 
     //清理UI
@@ -459,9 +464,12 @@ void SceneMain::spawnEnemy()
     if (dis(gen) > 1 / 60.0f){
         return;
     }
-    Enemy* enemy = new Enemy(EnemyPrototype);
+    // Enemy* enemy = new Enemy(EnemyPrototype);
+    auto enemy = enemyPool->create();
     enemy->position.x = dis(gen) * (game.getWindowWidth() - enemy->width);
     enemy->position.y = -static_cast<float>(enemy->height);
+    enemy->currentHealth = EnemyPrototype.currentHealth;
+    enemy->lastShootTime = 0;
     enemies.push_back(enemy);
 }
 
@@ -482,7 +490,8 @@ void SceneMain::updateEnemies(float deltaTime)
         auto enemy = *it;
         enemy->position.y += deltaTime * enemy->speed;
         if (enemy->position.y > game.getWindowHeight()){
-            delete enemy;
+            // delete enemy;
+            enemyPool->release(enemy);
             it = enemies.erase(it);
         }else{
             if (currentTime - enemy->lastShootTime > enemy->coolDown && isDead == false){
@@ -577,7 +586,8 @@ void SceneMain::enemyExplode(Enemy * enemy)
         dropItem(enemy);
     }
     score += 10;
-    delete enemy;
+    // delete enemy;
+    enemyPool->release(enemy);
 }
 
 void SceneMain::updateExplosions(float)

@@ -22,7 +22,10 @@ struct Player{
 
 struct Enemy{
     SDL_Texture *texture =nullptr;
-    SDL_FPoint position = {0,0};
+    union{
+        Enemy* next = nullptr;
+        SDL_FPoint position;
+    };
     int width = 0;
     int height = 0;
     int speed = 150; 
