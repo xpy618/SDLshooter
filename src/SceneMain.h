@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "Object.h"
+#include "PlayerProjPool.h"
 #include <list>
 #include <random>
 #include <map>
@@ -37,14 +38,17 @@ private:
     int playerShieldWidth = 0;  // 新增：存储缩放后的防护罩宽度
     int playerShieldHeight = 0; // 新增：存储缩放后的防护罩高度
 
-    //创建每个物体的模板
-    Enemy EnemyTemplate;
-    ProjectilePlayer ProjectilePlayerTemplate;
-    ProjectileEnemy ProjectileEnemyTemplate;
-    Explosion ExplosionTemplate;
-    Item ItemLifeTemplate;
-    Item ItemShieldTemplate;
+    //创建每个物体的原型
+    Enemy EnemyPrototype;
+    ProjectilePlayer ProjectilePlayerPrototype;
+    ProjectileEnemy ProjectileEnemyPrototype;
+    Explosion ExplosionPrototype;
+    Item ItemLifePrototype;
+    Item ItemShieldPrototype;
     SDL_Texture* playerShieldTexture = nullptr;
+
+    //创建内存池
+    PlayerProjPool* playerProjPool = nullptr;
 
     //创建容器
     std::list<Enemy*> enemies;
